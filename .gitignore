@@ -1,4 +1,4 @@
 .obsidian/
 .git/
 .vscode/
-
+db_env.sh

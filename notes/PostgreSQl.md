@@ -1,20 +1,21 @@
 ## Installation
 
  1. **Install PostgreSQL server and client**
+<br>
 `sudo dnf install postgresql-server postgresql-contrib`
 
 2. **Initialize the database cluster**  
-    This is required once after installation.
+    This is required once after installation.<br>
 `sudo postgresql-setup --initdb`
 
-3. **Enable and start PostgreSQL**
+3. **Enable and start PostgreSQL**<br>
 `sudo systemctl enable postgresql sudo systemctl start postgresql`
 
-4. **Verify it’s running**
+4. **Verify it’s running**<br>
 `systemctl status postgresql`
-5. **Accessing PostgreSQL**
+5. **Accessing PostgreSQL**<br>
 PostgreSQL creates a default Linux user called postgres. To manage the database, you need to execute commands as that user.
-The quick way to enter the SQL shell:
+The quick way to enter the SQL shell:<br>
 
 `sudo -u postgres psql`
 
@@ -50,6 +51,11 @@ Now that you have created a user that matches your Linux login (in step A.2), yo
 - To list tables: \dt
 - To quit: \q
 
+<br>
+ Otherwise you can just:
+`psql -d your_database_name -c "\dt"`
+you can execute whatever command you want without having to login 
+
 # The Command to run a file
 To run the SQL file you are currently working on in SQLTools, use this command structure:
 `psql -h <host> -U <username> -d <database> -f <filename.sql>`
@@ -58,6 +64,40 @@ To run the SQL file you are currently working on in SQLTools, use this command s
 - U: Username (e.g., postgres)
 - d: Database name
 - f: The path to your SQL file
+
+---
+# Better practices:
+1. Make a env file containing a bash script that loads your database's information. Like the following:
+```sh
+export PGHOST="localhost"
+export PGPORT="5432"
+export PGDATABASE="incomeDB"
+export PGUSER="hajora"
+export PGPASSWORD="*****"
+
+echo "Database environment variables set for incomeDB." 
+```
+2. Run your SQL file with only specify one thing: the file name.<br>
+`psql -f filename.sql`
+
+3. this article is very interesting concerning the dates manipulation:<br>
+https://www.geeksforgeeks.org/postgresql/postgresql-date-data-type/
+<br>
+---
+# Code checking:
+If your worry is that the script inserts data or deletes things, and you just want to check if the syntax (grammar) is correct without actually changing your database, wrap the code in a transaction with a rollback.<br>
+Add BEGIN; at the very top and ROLLBACK; at the very bottom.
+
+```sql
+BEGIN; -- Start a transaction
+
+-- Your crazy code here
+INSERT INTO users (name) VALUES ('Test');
+DELETE FROM orders WHERE id = 5;
+
+ROLLBACK; -- Undo EVERYTHING that just happened```
+```
+
 ---
 
 # points to check:
