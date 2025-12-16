@@ -12,7 +12,7 @@ INSERT INTO expense_categories (name, description) VALUES
 
 INSERT INTO bank_account (rib, bank_name, current_balance, account_type) VALUES
     ('12345678901234567890', 'Chase Bank', 4520.50, 'checking'),
-    ('98765432109876543210', 'Bank of America', 12000.00, 'savings'),
+    ('98765432109876543210', 'Bank of America', z3, 'savings'),
     ('11223344556677889900', 'Wells Fargo', 50000.00, 'deposit'),
     ('55667788990011223344', 'Ally Bank', 850.75, 'checking');
 

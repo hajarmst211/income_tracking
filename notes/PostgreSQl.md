@@ -80,9 +80,17 @@ echo "Database environment variables set for incomeDB."
 2. Run your SQL file with only specify one thing: the file name.<br>
 `psql -f filename.sql`
 
-3. this article is very interesting concerning the dates manipulation:<br>
+3. If you are joining two table, any column in the top SELECT line that is not inside the math parentheses MUST go in the GROUP BY line.
+
+
+---
+
+# DATE/Time
+
+- this article is very interesting concerning the dates manipulation:<br>
 https://www.geeksforgeeks.org/postgresql/postgresql-date-data-type/
 <br>
+- `SELECT EXTRACT (DAY / MONTH / YEAR from NOW());` : to get the current date information
 ---
 # Code checking:
 If your worry is that the script inserts data or deletes things, and you just want to check if the syntax (grammar) is correct without actually changing your database, wrap the code in a transaction with a rollback.<br>
@@ -105,3 +113,14 @@ ROLLBACK; -- Undo EVERYTHING that just happened```
 1. Persistence: How to save code so it is not lost after the session ends (using SQL script files).
 2. Versioning: How to manage changes (like adding a new table) after the database already contains data, without deleting that data (using incremental Migrations).
 3. Synchronization: How the database knows which files it has already run so it doesn't try to create the same table twice (using a schema_migrations metadata table).
+
+---
+# Untrusted data
+1. Indexation: it makes the search algorithm go from O(n) to O(1)
+2. Hashing: hashmaps
+
+--- 
+- know the difference between LDD/LMD/LSD:
+1. LDD: create, alter, drop
+2. LMD: insert, update, delete, select
+3. LSD: donner des privileges a des utilisateurs  (grant, deny, remove..)
