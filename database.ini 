@@ -1,5 +1,0 @@
-[postgresql]
-host=localhost
-database=incomeDB
-user=hajora
-password=hajora

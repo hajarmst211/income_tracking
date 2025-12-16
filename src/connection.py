@@ -1,11 +1,18 @@
 import psycopg2
 from configparser import ConfigParser
-
+import os
 
 def config(filename='database.ini', section='postgresql'):
     parser = ConfigParser()
+        
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Create the full path to the .ini file
+    full_path = os.path.join(script_dir, filename)
+    if not os.path.exists(full_path):
+        raise Exception(f'File {filename} not found at {full_path}')
     parser.read(filename)
-
+    
     db = {}
     if parser.has_section(section):
         params = parser.items(section)
@@ -17,32 +24,16 @@ def config(filename='database.ini', section='postgresql'):
     return db
 
 
-
 def connect():
-    """ Connect to the PostgreSQL database server """
-    conn = None
+    connection = None
     try:
         params = config()
+        connection = psycopg2.connect(**params)
 
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(**params)
-        
-        cur = conn.cursor()
-        
-        print('PostgreSQL database version:')
-        cur.execute('SELECT version()')
-
-        db_version = cur.fetchone()
-        print(db_version)
-       
-        cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
-    finally:
-        if conn is not None:
-            conn.close()
-            print('Database connection closed.')
+    
+    return connection
+
+      
             
-            
-if __name__ == "__main__":
-    connect()

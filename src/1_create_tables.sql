@@ -36,4 +36,3 @@ CREATE TABLE IF NOT EXISTS monthly_expenses(
     due_day INT CHECK (due_day BETWEEN 1 AND 31),
     flexibility_degree flexibility_levels
 );
-
