@@ -4,3 +4,5 @@
 db_env.sh
 database.ini 
 __pycache__/
+insert_data.sql
+test_query.sql
