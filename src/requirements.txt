@@ -1,0 +1,3 @@
+prettytable @ git+https://github.com/prettytable/prettytable@25639c6870cc1a4ce4ee48668b673b93ac3be3d1
+psycopg2-binary==2.9.11
+wcwidth==0.2.14
