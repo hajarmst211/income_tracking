@@ -5,10 +5,38 @@ from  connection import connect
 
 # standard functions
 import psycopg2
+from psycopg2 import sql
 from decimal import Decimal
+from prettytable import PrettyTable
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+
+def display_table(connection, table_name):
+    try:
+        if connection is not None:
+            with connection.cursor() as cursor:
+                display_script = sql.SQL("SELECT * FROM {table}").format(
+                    table=sql.Identifier(table_name)
+                )
+                cursor.execute(display_script)
+                headers = [desc[0] for desc in cursor.description]
+                rows = cursor.fetchall()
+                
+                if rows:
+                    table = PrettyTable()
+                    table.field_name = headers
+                    table.add_rows(rows)
+                    table.align = "c"
+                    print(table)
+                else:
+                    logging.error("query return no rows")
+        else:
+            print("connection is None")
+            
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error(error)
+        raise error
 
 def add_bank_account(connection,
                         rib,
@@ -31,6 +59,8 @@ def add_bank_account(connection,
             connection.commit()
             
         logging.info("bank account added successfully!")
+        print("This is the bank account table after the transaction:\n")
+        display_table(connection, 'bank_account')
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(error)
         raise error
@@ -53,8 +83,11 @@ def add_transaction(connection,
                             '''
             cursor.execute(insert_script, (money_amount, transaction_reason, account_id))
             connection.commit()
-            
+                        
         logging.info("Transaction added successfully!")
+        print("This is the transactions table after the transaction:\n")
+        display_table(connection, 'Transactions')
+
 
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(f"Error adding transaction: {error}")
@@ -78,6 +111,8 @@ def add_expense_category(connection,
             connection.commit()
 
         logging.info("Expense category added successfully!")
+        print("This is the bank Expense categories after the transaction:\n")
+        display_table(connection, 'expense_categories')
 
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(f"Error adding expense category: {error}")
@@ -110,6 +145,8 @@ def add_monthly_expense(
             connection.commit()
 
         logging.info("bank monthly expense added successfully!")
+        print("This is the bank monthly expenses after the transaction:\n")
+        display_table(connection, 'monthly_expenses')
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(error)
         raise error
@@ -183,24 +220,14 @@ def delete_monthly_expense(connection, expense_id):
         raise error
 
 
-def display_table(connection,table):
-    try:
-        with connection.cursor() as cursor:
-            display_script = ("SELECT * FROM %s")
-            cursor.execute(display_script,(table,))
-            connection.commit()
-            
-    except (Exception, psycopg2.DatabaseError) as error:
-        logging.error(error)
-        raise error
-
 
 if __name__ == "__main__":
     try:
         connection =  connect()
         if connection is not  None:
             display_table(connection, 'bank_account')
-        
+        else:
+            ("print connection is None")
     except Exception as error:
         logging.error(error)
         if connection:

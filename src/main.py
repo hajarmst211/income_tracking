@@ -22,37 +22,33 @@ def addition_cases(addition_choice, connection):
 def suppression_cases(suppression_choice, connection):
     match suppression_choice:
         case 1:
-            delete_bank_account(connection)
+            delete_bank_account_cli(connection)
         case 2:
-            delete_transaction(connection)
+            delete_transaction_cli(connection)
         case 3:                
-            delete_expense_category(connection)
+            delete_expense_category_cli(connection)
         case 4:
-            delete_monthly_expense(connection)
+            delete_monthly_expense_cli(connection)
         case 5:
             main_menu()
             
             
-def display_table_choice(table_name, connection):
-    match table_name:
+def display_table_choice(connection, table_choice):
+    match table_choice:
         case 1:
-            table_name = "bank_account"
-            display_table(connection, table_name)
+            display_table(connection, 'bank_account')
         case 2:
-            table_name = "Transactions"
-            display_table(connection, table_name)
-        case 3:                
-            table_name = "expense_categories"
-            display_table(connection, table_name)
+            display_table(connection, 'Transactions')
+        case 3:
+            display_table(connection, 'expense_categories')
         case 4:
-            table_name = "monthly_expenses"
-            display_table(connection, table_name)
+            display_table(connection, 'monthly_expenses')
         case 5:
             main_menu()
 
 def main():
-    connection = connect()
     while(1):
+        connection = connect()
         choice = main_menu()
         match choice:
             case 1:
