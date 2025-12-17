@@ -183,16 +183,23 @@ def delete_monthly_expense(connection, expense_id):
         raise error
 
 
+def display_table(connection,table):
+    try:
+        with connection.cursor() as cursor:
+            display_script = ("SELECT * FROM %s")
+            cursor.execute(display_script,(table,))
+            connection.commit()
+            
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error(error)
+        raise error
+
+
 if __name__ == "__main__":
     try:
         connection =  connect()
         if connection is not  None:
-            add_bank_account(connection)
-
-            add_transaction(connection)
-            add_monthly_expense(connection)
-            add_expense_category(connection)
-         
+            display_table(connection, 'bank_account')
         
     except Exception as error:
         logging.error(error)
