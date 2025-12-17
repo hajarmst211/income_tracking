@@ -34,6 +34,3 @@ def connect():
         print(error)
     
     return connection
-
-      
-            
