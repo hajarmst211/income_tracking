@@ -220,6 +220,8 @@ def delete_monthly_expense(connection, expense_id):
         raise error
 
 
+def sign_in(connection, )
+
 
 if __name__ == "__main__":
     try:

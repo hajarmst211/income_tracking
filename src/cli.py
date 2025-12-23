@@ -90,6 +90,25 @@ def delete_expense_category_cli(connection):
     expense_id = int(input("Enter the expense_id of the monthly expense to delete: \n"))
     delete_expense_category(connection, expense_id)
 
+def sign_in_cli(connection):
+    
+
+def welcome_menu():
+    choice_script = '''
+                    Hi, welcome to your income tracking interface.
+                    login or sign in:
+                    [1] login
+                    [2] sign in
+                    [3] quit
+                    '''
+    try:                
+        choice = int(input(choice_script))
+        if choice not in range(1,4):
+            logging.error("The choice is out of range, it must be between 1 to 3")
+    except ValueError :
+        logging.error("Invalid value! Give an integer")
+        
+    return choice
 
 def main_menu():
     choice_script = '''

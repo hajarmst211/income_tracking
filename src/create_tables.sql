@@ -4,8 +4,17 @@ CREATE TYPE account_types AS ENUM ('savings', 'deposit', 'checking');
 CREATE TYPE flexibility_levels AS ENUM ('0', '1', '2', '3');
 
 
+CREATE TABLE IF NOT EXISTS users(
+    username VARCHAR(10) PRIMARY KEY,
+    user_first_name VARCHAR(20) NOT NULL,
+    user_last_name VARCHAR(20) NOT NULL,
+    password_hash TEXT NOT NULL,
+);
+
+
 CREATE TABLE IF NOT EXISTS bank_account(
     account_id SERIAL PRIMARY KEY,
+    username VARCHAR(10) REFERENCES users(username),
     rib VARCHAR(20),
     bank_name VARCHAR(20),
     current_balance NUMERIC(12, 2),
@@ -15,6 +24,7 @@ CREATE TABLE IF NOT EXISTS bank_account(
 
 CREATE TABLE IF NOT EXISTS Transactions(
     transaction_id SERIAL PRIMARY KEY,
+    username VARCHAR(10) REFERENCES users(username),
     money_amount NUMERIC(12, 2) NOT NULL,
     transaction_reason VARCHAR(225),
     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -24,6 +34,7 @@ CREATE TABLE IF NOT EXISTS Transactions(
 
 CREATE TABLE If NOT EXISTS expense_categories(
     category_id SERIAL PRIMARY KEY,
+    username VARCHAR(10) REFERENCES users(username),
     name VARCHAR(20) NOT NULL UNIQUE,
     description TEXT
 );
@@ -31,6 +42,7 @@ CREATE TABLE If NOT EXISTS expense_categories(
 
 CREATE TABLE IF NOT EXISTS monthly_expenses(
     expense_id SERIAL PRIMARY KEY,
+    username VARCHAR(10) REFERENCES users(username),
     expense_category INT REFERENCES expense_categories(category_id),
     amount NUMERIC(12, 2),
     due_day INT CHECK (due_day BETWEEN 1 AND 31),
