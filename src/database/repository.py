@@ -1,7 +1,7 @@
 #user_input.py
 
 # Local function importation:
-from  connection import connect 
+from  database.connection import connect 
 
 # standard functions
 import psycopg2
@@ -218,9 +218,6 @@ def delete_monthly_expense(connection, expense_id):
     except (Exception, psycopg2.DatabaseError) as error:
         logging.error(f"Error deleting monthly expense: {error}")
         raise error
-
-
-def sign_in(connection, )
 
 
 if __name__ == "__main__":

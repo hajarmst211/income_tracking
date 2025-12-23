@@ -1,8 +1,8 @@
-from cli import *
+from database.user_interface.menus import *
 
 #local functions:
-from connection import connect
-from db_operations import display_table
+from database.connection import connect
+from database.repository import display_table
 
 
 def addition_cases(addition_choice, connection):

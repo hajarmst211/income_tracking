@@ -24,19 +24,36 @@ The database tracks bank accounts, transactions, expense categories, and monthly
 ## Project Structure
 
 ```
-src/
+income_tracker/
 │
-├── cli.py                  # CLI menus and user input
-├── connection.py           # PostgreSQL connection handling
-├── db_operations.py        # CRUD operations
-├── user_input.py           # Main program loop
+├── config/
+│   ├── database.ini          # Database credentials
+│   └── settings.py           # ConfigParser logic to load the .ini
 │
-├── database.ini            # Database credentials
-│
-├── sql/
+├── sql/                      # Raw SQL files for reference/setup
 │   ├── 01_create_tables.sql
-│   ├── 02_insert_data.sql
-│   └── 03_test_query.sql
+│   └── 02_insert_data.sql
+│
+├── src/
+│   ├── __init__.py
+│   ├── database/             # Database communication layer
+│   │   ├── __init__.py
+│   │   ├── connection.py     # Connection logic (Context Managers)
+│   │   └── repository.py     # Pure SQL execution (add/delete/fetch)
+│   │
+│   ├── services/             # Business logic (Validation, Auth, Calculations)
+│   │   ├── __init__.py
+│   │   ├── auth_service.py   # Login/Sign-up logic (Hashing)
+│   │   └── session.py        # Store the current logged-in user
+│   │
+│   └── ui/                   # User Interface (CLI)
+│       ├── __init__.py
+│       ├── menus.py          # Printing menus and getting choices
+│       └── handlers.py       # Functions that bridge UI input to Services/DB
+│
+├── main.py                   # Application Entry Point
+├── requirements.txt          # Dependencies
+└── .gitignore                # Exclude __pycache__, .ini, etc.
 ```
 
 ---

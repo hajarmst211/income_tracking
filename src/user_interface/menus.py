@@ -1,9 +1,9 @@
 #cli.py
 
 #local functions:
-from db_operations import add_bank_account, add_expense_category, add_monthly_expense, add_transaction
-from db_operations import delete_bank_account, delete_expense_category, delete_transaction, delete_monthly_expense
-from db_operations import display_table
+from database.repository import add_bank_account, add_expense_category, add_monthly_expense, add_transaction
+from database.repository import delete_bank_account, delete_expense_category, delete_transaction, delete_monthly_expense
+from database.repository import display_table
 #standard function:
 from decimal import Decimal
 import logging

@@ -77,6 +77,9 @@ export PGPASSWORD="*****"
 
 echo "Database environment variables set for incomeDB." 
 ```
+for this case run: 
+`./db_env.sh`
+
 2. Run your SQL file with only specify one thing: the file name.<br>
 `psql -f filename.sql`
 
