@@ -30,7 +30,6 @@ def handle_login(connection, active_session, username, hashed_password):
                       Something is wrong in your authentication, try again!\n 
                       If you don't have an account feel free to sign in.\n
                       ''')
-        menus.welcome_menu()
     return
 
 
@@ -41,7 +40,7 @@ def handle_signup():
     else:
         signup_menu()
     return 
-        
+
     
 def handle_addition(connection, current_user):
     try:

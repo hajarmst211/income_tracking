@@ -1,7 +1,7 @@
 # menus.py
 
 import logging
-from menus_handlers import welcome_handler, handle_login, handle_signup
+from menus_handlers import *
 
 def welcome_menu(connection, active_session):
     choice_script = '''
@@ -15,7 +15,7 @@ def welcome_menu(connection, active_session):
         choice = int(input(choice_script))
         if choice not in range(1, 4):
             logging.error("The choice is out of range, it must be between 1 to 3")
-            return welcome_menu(connection, active_session)
+        return choice
         
         welcome_handler(connection, active_session, choice)
     except ValueError:
