@@ -1,14 +1,16 @@
 # db_operations_handlers.py
 
 #local functions:
-from database.repository import add_bank_account, add_expense_category, add_monthly_expense, add_transaction
+from database.repository import add_bank_account, add_expense_category, add_monthly_expense, add_transaction, add_user
 from database.repository import delete_bank_account, delete_expense_category, delete_transaction, delete_monthly_expense
-from database.repository import get_table_content
+from database.repository import get_all_records
+from user_interface.menus import signup_menu
+
 #standard function:
 from decimal import Decimal
 from prettytable import PrettyTable
 import logging
-
+import bcrypt
 
 def print_as_table(headers, rows):
     if not rows:
@@ -29,8 +31,8 @@ def print_as_table(headers, rows):
 '''
     
 
-def display_table(connection, table_name, username):
-    headers, rows = get_table_content(connection, table_name, username)
+def display_table(connection, table_name):
+    headers, rows = get_all_records(connection, table_name)
     
     print(f"\nDisplaying Table: {table_name}")
     print_as_table(headers, rows)
@@ -111,7 +113,54 @@ def delete_monthly_expense_cli(connection):
     
     
 def delete_expense_category_cli(connection):
-    print("This is an overview of the expense_categories table:\n")
-    display_table(connection, 'expense_categories')
-    expense_id = int(input("Enter the expense_id of the monthly expense to delete: \n"))
-    delete_expense_category(connection, expense_id)
+    try:
+        print("This is an overview of the expense_categories table:\n")
+        display_table(connection, 'expense_categories')
+        expense_id = int(input("Enter the expense_id of the monthly expense to delete: \n"))
+        delete_expense_category(connection, expense_id)
+    except Exception as error:
+        logging.error(error)
+        
+def create_user_cli(connection):
+        # username:
+        username = input("Choose a username (max 10 characters):\n").strip()
+        if not username:
+            logging.error("Error: Username cannot be empty.\n")
+            return signup_menu()
+        if len(username) > 10:
+            print("Error: Username exceeds the 10-character limit.\n")
+            return signup_menu()
+        
+        # first name:
+        first_name = input("Enter your first name:\n").strip()
+        if not first_name or len(first_name) > 20:
+            logging.error("Error: First name must be between 1 and 20 characters.\n")
+            return signup_menu()
+
+        # last name:
+        last_name = input("Enter your last name:\n").strip()
+        if not last_name or len(last_name) > 20:
+            logging.error("Error: Last name must be between 1 and 20 characters.\n")
+            return signup_menu()
+
+        # password
+        password = input("Enter a password:\n")
+        if not password:
+            logging.error("Error: Password cannot be empty.\n")
+            return signup_menu()
+        
+        # confirm password!  
+        confirm_password = input("Confirm your password:\n")
+        if password != confirm_password:
+            logging.error("Error: Passwords do not match.\n")
+            return signup_menu()
+
+        password_bytes = password.encode('utf-8')
+        salt = bcrypt.gensalt()
+        hashed_password = bcrypt.hashpw(password_bytes, salt)
+        
+        # add user:
+        user = add_user(username, first_name, last_name, hashed_password)
+        return 0
+        
+        

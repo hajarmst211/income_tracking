@@ -7,7 +7,6 @@ from connection import connect
 import psycopg2
 from psycopg2 import sql
 import logging
-from werkzeug.security import check_password_hash, generate_password_hash
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -168,31 +167,31 @@ def get_user_info(connection, username_to_find):
         raise error 
 
 
-def is_password_correct(user_information, input_password):
+def add_user(connection, username, first_name, last_name, hashed_password):
     try:
-        if user_information is None:
-            logging.error("User not found in database")
-            return False
-        
-        db_password = user_information[3]
-        print(f"DEBUG: Data at index 3 is: {user_information[3]}")
-        real_hash = generate_password_hash("python123")
-        print(f"DEBUG: The hashed input password is:{real_hash}")
-        
-        is_correct = check_password_hash(db_password, input_password)
-        print(f"The password given isc:{is_correct}")
-        
-    except (Exception, psycopg2.DatabaseError) as error:
-        logging.error(f"The error that occurred isc:{error}")
-
-
+        with connection.cursor() as cursor:
+            insert_script = '''
+                INSERT INTO bank_account (username, first_name, last_name, password_hash)
+                VALUES (%s, %s, %s, %s)
+                RETURNING *;
+            '''
+            cursor.execute(insert_script, (username, first_name, last_name, hashed_password))
+            new_user = cursor.fetchone()
+            connection.commit()
+            logging.info("Bank account added successfully!")
+            return new_user
+    except Exception as error:
+        logging.error(f"can't sign you up, the error is: {error}")
+        connection.rollback()
+        raise error
+    
+    
 if __name__ == "__main__":
     connection = None
     try:
         connection = connect()
         if connection:
             user_info = (get_user_info(connection, "jdoe"))
-            is_password_correct(user_info, 'python123')
     except Exception as error:
         logging.error(error)
     finally:

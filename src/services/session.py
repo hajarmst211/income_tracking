@@ -19,4 +19,4 @@ class Session:
             self.last_name = None
             
 
-user_session = Session()
+active_session = Session()

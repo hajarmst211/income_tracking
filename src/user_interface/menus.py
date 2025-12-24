@@ -1,9 +1,7 @@
-#menus.py
+# menus.py
 
 # local function:
-from menus_handlers import welcome_menu_handler, logging_menu_handler
-from services.auth_services import is_authentication_valid
-
+from menus_handlers import *
 
 # standard libraries
 from decimal import Decimal
@@ -16,7 +14,7 @@ def welcome_menu():
                     Hi, welcome to your income tracking interface.
                     login or sign in:
                     [1] login
-                    [2] sign in
+                    [2] sign up
                     [3] quit
                     '''
     try:                
@@ -25,8 +23,7 @@ def welcome_menu():
             logging.error("The choice is out of range, it must be between 1 to 3")
     except ValueError :
         logging.error("Invalid value! Give an integer")
-    
-    welcome_menu_handler(choice)  
+    welcome_handler(choice)  
     return 0
 
 
@@ -34,33 +31,44 @@ def login_menu():
     try:
         username = input("Enter your username:\n").strip()
         if len(username) > 10:
-            print("Error: Username exceeds the 10-character limit.")
+            print("Error: Username exceeds the 10-character limit.\n")
+            login_menu()
             return 1
         if not username:
-            print("Error: Username cannot be empty.")
+            print("Error: Username cannot be empty.\n")
             return 1
 
         password = input("Enter the password:\n")
         if not password:
-            print("Error: Password cannot be empty.")
+            print("Error: Password cannot be empty.\n")
+            login_menu()
             return 1
         # bcrypt only takes inputs in bytes!
         password_bytes = password.encode('utf-8')
-
-        logging_menu_handler(username, password_bytes)
-        
-        print("Process completed successfully.")
+        handle_login(username, password_bytes)
         return 0
 
     except UnicodeEncodeError:
-        print("Error: Password contains invalid characters.")
+        print("Error: Password contains invalid characters.\n")
         return 1
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
         return 1
 
-def sign_in_menu():
-    print("new_user") 
+
+def signup_menu():
+    try:
+        handle_signup()
+        logging.info("Account created successfully!\n")
+        return 0
+
+    except UnicodeEncodeError:
+        print("Error: Input contains invalid characters.\n")
+        return 1
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return 1
+    
 
 
 def main_menu():
@@ -76,6 +84,8 @@ def main_menu():
         choice = int(input(choice_script))
         if choice not in range(1,5):
             logging.error("The choice is out of range, it must be between 1 to 4")
+            main_menu()
+            return
     except ValueError :
         logging.error("Invalid value! Give an integer")
         
@@ -95,9 +105,11 @@ def addition_menu():
         choice = int(input(choice_script))
         if choice not in range(1,6):
             logging.error("The choice is out of range, it must be between 1 to 5")
+            addition_menu()
+            return 
     except ValueError :
         logging.error("Invalid value! Give an integer")
-        
+        addition_menu()
     return choice
 
 
@@ -115,9 +127,11 @@ def suppression_menu():
         choice = int(input(choice_script))
         if choice not in range(1,6):
             logging.error("The choice is out of range, it must be between 1 to 5")
+            suppression_menu()
+            return
     except ValueError :
         logging.error("Invalid value! Give an integer")
-        
+        suppression_menu()
     return choice
 
 
@@ -135,7 +149,9 @@ def table_display_menu():
         choice = int(input(choice_script))
         if choice not in range(1,6):
             logging.error("The choice is out of range, it must be between 1 to 5")
+            table_display_menu()
+            return 
     except ValueError :
         logging.error("Invalid value! Give an integer")
-        
+        table_display_menu()
     return choice
