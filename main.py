@@ -1,9 +1,9 @@
 # main.py
 
 #local functions:
-from user_interface.menus import *
-from user_interface.menus_handlers import *
-from database.connection import connect   
+from src.user_interface.menus import *
+from src.user_interface.menus_handlers import *
+from src.database.connection import connect   
 
 def main():
     connection = connect()

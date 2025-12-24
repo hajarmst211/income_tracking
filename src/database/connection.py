@@ -6,14 +6,14 @@ import os
 
 def config(filename='database.ini', section='postgresql'):
     parser = ConfigParser()
-        
-    script_dir = os.path.dirname(os.path.abspath(__file__))
+    base_path = os.path.dirname(__file__)
     
     # Create the full path to the .ini file
-    full_path = os.path.join(script_dir, filename)
+    full_path = os.path.join(base_path, filename)
     if not os.path.exists(full_path):
         raise Exception(f'File {filename} not found at {full_path}')
-    parser.read(filename)
+    
+    parser.read(full_path)
     
     db = {}
     if parser.has_section(section):
@@ -36,3 +36,6 @@ def connect():
         print(error)
     
     return connection
+
+
+connect()

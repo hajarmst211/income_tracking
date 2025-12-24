@@ -115,5 +115,3 @@ def delete_expense_category_cli(connection):
     display_table(connection, 'expense_categories')
     expense_id = int(input("Enter the expense_id of the monthly expense to delete: \n"))
     delete_expense_category(connection, expense_id)
-
-

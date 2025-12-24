@@ -1,9 +1,15 @@
 #menus.py
 
-#standard function:
+# local function:
+from menus_handlers import welcome_menu_handler, logging_menu_handler
+from services.auth_services import is_authentication_valid
+
+
+# standard libraries
 from decimal import Decimal
-from menus_handlers import welcome_menu_handler
 import logging
+import bcrypt
+
 
 def welcome_menu():
     choice_script = '''
@@ -23,12 +29,39 @@ def welcome_menu():
     welcome_menu_handler(choice)  
     return 0
 
+
 def login_menu():
-    username= input("Enter your username:\n")
-    password= input("Entre the password:\n")
+    try:
+        username = input("Enter your username:\n").strip()
+        if len(username) > 10:
+            print("Error: Username exceeds the 10-character limit.")
+            return 1
+        if not username:
+            print("Error: Username cannot be empty.")
+            return 1
+
+        password = input("Enter the password:\n")
+        if not password:
+            print("Error: Password cannot be empty.")
+            return 1
+        # bcrypt only takes inputs in bytes!
+        password_bytes = password.encode('utf-8')
+
+        logging_menu_handler(username, password_bytes)
+        
+        print("Process completed successfully.")
+        return 0
+
+    except UnicodeEncodeError:
+        print("Error: Password contains invalid characters.")
+        return 1
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return 1
 
 def sign_in_menu():
     print("new_user") 
+
 
 def main_menu():
     choice_script = '''

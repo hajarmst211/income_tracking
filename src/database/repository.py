@@ -1,9 +1,13 @@
 # repository.py
 
-from database.connection import connect 
+# local function
+from connection import connect 
+
+# standard libraries
 import psycopg2
 from psycopg2 import sql
 import logging
+from werkzeug.security import check_password_hash, generate_password_hash
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -147,13 +151,48 @@ def delete_monthly_expense(connection, expense_id):
         connection.rollback()
         raise error
 
+
+def get_user_info(connection, username_to_find):
+    try:
+        with connection.cursor() as cursor:
+            query = "SELECT * FROM users WHERE username = %s"
+            cursor.execute(query, (username_to_find,))
+            user_information = cursor.fetchone()
+            
+            logging.info(f"{username_to_find} information fetched succefully!")
+            return user_information
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error(f"Error finding the user {username_to_find}: {error}")
+        connection.rollback()
+        raise error 
+
+
+def is_password_correct(user_information, input_password):
+    try:
+        if user_information is None:
+            logging.error("User not found in database")
+            return False
+        
+        db_password = user_information[3]
+        print(f"DEBUG: Data at index 3 is: {user_information[3]}")
+        real_hash = generate_password_hash("python123")
+        print(f"DEBUG: The hashed input password is:{real_hash}")
+        
+        is_correct = check_password_hash(db_password, input_password)
+        print(f"The password given isc:{is_correct}")
+        
+    except (Exception, psycopg2.DatabaseError) as error:
+        logging.error(f"The error that occurred isc:{error}")
+
+
 if __name__ == "__main__":
     connection = None
     try:
         connection = connect()
         if connection:
-            records = get_all_records(connection, 'bank_account')
-            logging.info(f"Retrieved {len(records[1])} records.")
+            user_info = (get_user_info(connection, "jdoe"))
+            is_password_correct(user_info, 'python123')
     except Exception as error:
         logging.error(error)
     finally:
