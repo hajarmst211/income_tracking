@@ -10,11 +10,14 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-def get_all_records(connection, table_name):
+
+def get_all_records(connection, table_name, username):
     try:
         with connection.cursor() as cursor:
-            query = sql.SQL("SELECT * FROM {table}").format(table=sql.Identifier(table_name))
-            cursor.execute(query)
+            query = sql.SQL("SELECT * FROM {table} WHERE username = %s").format(
+                table=sql.Identifier(table_name)
+            )
+            cursor.execute(query, (username,))
             headers = [desc[0] for desc in cursor.description]
             rows = cursor.fetchall()
             return headers, rows
@@ -22,15 +25,15 @@ def get_all_records(connection, table_name):
         logging.error(error)
         raise error
 
-def add_bank_account(connection, rib, bank_name, current_balance, account_type):
+def add_bank_account(connection, username, rib, bank_name, current_balance, account_type):
     try:
         with connection.cursor() as cursor:
             insert_script = '''
-                INSERT INTO bank_account (rib, bank_name, current_balance, account_type)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO bank_account (username, rib, bank_name, current_balance, account_type)
+                VALUES (%s, %s, %s, %s, %s)
                 RETURNING *;
             '''
-            cursor.execute(insert_script, (rib, bank_name, current_balance, account_type))
+            cursor.execute(insert_script, (username, rib, bank_name, current_balance, account_type))
             new_account = cursor.fetchone()
             connection.commit()
             logging.info("Bank account added successfully!")
@@ -40,15 +43,15 @@ def add_bank_account(connection, rib, bank_name, current_balance, account_type):
         connection.rollback()
         raise error
 
-def add_transaction(connection, money_amount, transaction_reason, account_id):
+def add_transaction(connection, username, money_amount, transaction_reason, account_id):
     try:
         with connection.cursor() as cursor:
             insert_script = '''
-                INSERT INTO Transactions (money_amount, transaction_reason, account_id)
-                VALUES (%s, %s, %s)
+                INSERT INTO Transactions (username, money_amount, transaction_reason, account_id)
+                VALUES (%s, %s, %s, %s)
                 RETURNING *;
             '''
-            cursor.execute(insert_script, (money_amount, transaction_reason, account_id))
+            cursor.execute(insert_script, (username, money_amount, transaction_reason, account_id))
             new_transaction = cursor.fetchone()
             connection.commit()
             logging.info("Transaction added successfully!")
@@ -58,15 +61,15 @@ def add_transaction(connection, money_amount, transaction_reason, account_id):
         connection.rollback()
         raise error
 
-def add_expense_category(connection, name, description):
+def add_expense_category(connection, username, name, description):
     try:
         with connection.cursor() as cursor:
             insert_script = '''
-                INSERT INTO expense_categories (name, description)
-                VALUES (%s, %s)
+                INSERT INTO expense_categories (username, name, description)
+                VALUES (%s, %s, %s)
                 RETURNING *;
             '''
-            cursor.execute(insert_script, (name, description))
+            cursor.execute(insert_script, (username, name, description))
             new_category = cursor.fetchone()
             connection.commit()
             logging.info("Expense category added successfully!")
@@ -76,15 +79,15 @@ def add_expense_category(connection, name, description):
         connection.rollback()
         raise error
 
-def add_monthly_expense(connection, expense_category, amount, due_day, flexibility_degree):
+def add_monthly_expense(connection, username, expense_category, amount, due_day, flexibility_degree):
     try:
         with connection.cursor() as cursor:
             insert_script = '''
-                INSERT INTO monthly_expenses (expense_category, amount, due_day, flexibility_degree)
-                VALUES (%s, %s, %s, %s)
+                INSERT INTO monthly_expenses (username, expense_category, amount, due_day, flexibility_degree)
+                VALUES (%s, %s, %s, %s, %s)
                 RETURNING *;
             '''
-            cursor.execute(insert_script, (expense_category, amount, due_day, flexibility_degree))
+            cursor.execute(insert_script, (username, expense_category, amount, due_day, flexibility_degree))
             new_expense = cursor.fetchone()
             connection.commit()
             logging.info("Monthly expense added successfully!")
@@ -94,11 +97,11 @@ def add_monthly_expense(connection, expense_category, amount, due_day, flexibili
         connection.rollback()
         raise error
 
-def delete_bank_account(connection, account_id):
+def delete_bank_account(connection, username, account_id):
     try:
         with connection.cursor() as cursor:
-            delete_script = 'DELETE FROM bank_account WHERE account_id = %s RETURNING account_id;'
-            cursor.execute(delete_script, (account_id,))
+            delete_script = 'DELETE FROM bank_account WHERE account_id = %s AND username = %s RETURNING account_id;'
+            cursor.execute(delete_script, (account_id, username))
             deleted_id = cursor.fetchone()
             connection.commit()
             logging.info("Bank account deleted successfully!")
@@ -108,11 +111,11 @@ def delete_bank_account(connection, account_id):
         connection.rollback()
         raise error
 
-def delete_transaction(connection, transaction_id):
+def delete_transaction(connection, username, transaction_id):
     try:
         with connection.cursor() as cursor:
-            delete_script = 'DELETE FROM Transactions WHERE transaction_id = %s RETURNING transaction_id;'
-            cursor.execute(delete_script, (transaction_id,))
+            delete_script = 'DELETE FROM Transactions WHERE transaction_id = %s AND username = %s RETURNING transaction_id;'
+            cursor.execute(delete_script, (transaction_id, username))
             deleted_id = cursor.fetchone()
             connection.commit()
             logging.info("Transaction deleted successfully!")
@@ -122,11 +125,11 @@ def delete_transaction(connection, transaction_id):
         connection.rollback()
         raise error
 
-def delete_expense_category(connection, category_id):
+def delete_expense_category(connection, username, category_id):
     try:
         with connection.cursor() as cursor:
-            delete_script = 'DELETE FROM expense_categories WHERE category_id = %s RETURNING category_id;'
-            cursor.execute(delete_script, (category_id,))
+            delete_script = 'DELETE FROM expense_categories WHERE category_id = %s AND username = %s RETURNING category_id;'
+            cursor.execute(delete_script, (category_id, username))
             deleted_id = cursor.fetchone()
             connection.commit()
             logging.info("Expense category deleted successfully!")
@@ -136,11 +139,11 @@ def delete_expense_category(connection, category_id):
         connection.rollback()
         raise error
 
-def delete_monthly_expense(connection, expense_id):
+def delete_monthly_expense(connection, username, expense_id):
     try:
         with connection.cursor() as cursor:
-            delete_script = 'DELETE FROM monthly_expenses WHERE expense_id = %s RETURNING expense_id;'
-            cursor.execute(delete_script, (expense_id,))
+            delete_script = 'DELETE FROM monthly_expenses WHERE expense_id = %s AND username = %s RETURNING expense_id;'
+            cursor.execute(delete_script, (expense_id, username))
             deleted_id = cursor.fetchone()
             connection.commit()
             logging.info("Monthly expense deleted successfully!")

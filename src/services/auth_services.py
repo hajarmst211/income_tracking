@@ -2,10 +2,11 @@
 
 import logging
 from werkzeug.security import check_password_hash
+from database.repository import get_user_info
 
-
-def is_password_correct(user_information, input_password):
+def is_password_correct(connection, username, input_password):
     try:
+        user_information = get_user_info(connection, username)
         if user_information is None:
             logging.error("User not found in database")
             return False

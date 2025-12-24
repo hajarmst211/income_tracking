@@ -11,23 +11,21 @@ def main():
         connection = connect()
         
         while active_session.username is None:
-            print("Please log in first.")
-            handle_login(conn)
-        
-        
-        choice = welcome_menu()
-        match choice:
-            case 1:
-                current_user = login_menu(connection)
-                    
-            case 2:
-                sign_in_menu(connection)
-                    
-            case 3: 
-                return
+            choice = welcome_menu()
+            match choice:
+                case 1:
+                    login_menu(connection, active_session)
+                        
+                case 2:
+                    signup_menu(connection)
+                        
+                case 3: 
+                    return
         
         while True:
+            current_user = active_session.current_user()
             choice = main_menu()
+            
             if choice == 1:
                 handle_addition(connection, current_user)
             elif choice == 2:

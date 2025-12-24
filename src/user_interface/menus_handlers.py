@@ -20,9 +20,10 @@ def welcome_handler(choice):
         return 1
 
 
-def handle_login(username, hashed_password):
-    authenticated = is_password_correct(username, hashed_password)
+def handle_login(connection, active_session, username, hashed_password):
+    authenticated = is_password_correct(connection, username, hashed_password)
     if authenticated:
+        active_session.current_user = username
         menus.main_menu()
     else:
         logging.error('''

@@ -31,136 +31,111 @@ def print_as_table(headers, rows):
 '''
     
 
-def display_table(connection, table_name):
-    headers, rows = get_all_records(connection, table_name)
-    
+def display_table(connection, table_name, username):
+    headers, rows = get_all_records(connection, table_name, username)
     print(f"\nDisplaying Table: {table_name}")
     print_as_table(headers, rows)
 
-
-def create_bank_account(connection):    
-    rib = Decimal(input("Enter your rib: \n"))
+def create_bank_account(connection, username):    
+    rib = input("Enter your rib: \n")
     bank_name = input("what is the bank's name: \n")
     balance = Decimal(input("what is the current balance?: \n"))
-    account_type = input("what is the account's type?: \n")
+    account_type = input("what is the account's type (savings, deposit, checking)?: \n")
         
     add_bank_account(
         connection,
+        username,
         rib=rib,
         bank_name=bank_name,
         current_balance=balance,
         account_type=account_type
     )
 
+def create_transaction(connection, username):
+    money_amount = Decimal(input("Enter the transaction amount: \n"))
+    transaction_reason = input("Enter the reason for the transaction: \n")
+    account_id = int(input("Enter the ID of the bank account for this transaction: \n"))
+    
+    add_transaction(
+        connection,
+        username,
+        money_amount,
+        transaction_reason,
+        account_id
+    )
 
-def create_transaction(connection):
-        money_amount = Decimal(input("Enter the transaction amount: \n"))
-        transaction_reason = input("Enter the reason for the transaction: \n")
-        account_id = int(input("Enter the ID of the bank account for this transaction: \n"))
-        
-        add_transaction(
-                        connection,
-                        money_amount,
-                        transaction_reason,
-                        account_id
-                        )
-        
-
-def create_expense_category(connection):
-        name = input("Enter the category name: \n")
-        description = input("Enter a brief description for this category (optional): \n")
-        
-        add_expense_category(
-                            connection,
-                            name,
-                            description
-                            )
+def create_expense_category(connection, username):
+    name = input("Enter the category name: \n")
+    description = input("Enter a brief description for this category (optional): \n")
+    
+    add_expense_category(
+        connection,
+        username,
+        name,
+        description
+    )
          
-def create_monthly_expense(connection):
-    expense_category = input("Provide an expense_category (category_id): \n")
+def create_monthly_expense(connection, username):
+    expense_category = int(input("Provide the category_id: \n"))
     amount = Decimal(input("Provide the amount: \n"))
-    due_day = Decimal(input("Provide the due day (1–31): \n"))
-    flexibility_degree = Decimal(input("Provide the flexibility degree: \n"))
+    due_day = int(input("Provide the due day (1–31): \n"))
+    flexibility_degree = input("Provide the flexibility degree (0, 1, 2, 3): \n")
 
     add_monthly_expense(
-                        connection,
-                        expense_category,
-                        amount,
-                        due_day,
-                        flexibility_degree
-                        )       
-    
+        connection,
+        username,
+        expense_category,
+        amount,
+        due_day,
+        flexibility_degree
+    )       
 
-def delete_bank_account_cli(connection):
-    print("This is an overview of the bank accounts table:\n")
-    display_table(connection, 'bank_account')
-    account_id = int(input("Enter the account_id of the bank account to delete: \n"))
-    delete_bank_account(connection, account_id)
+def delete_bank_account_cli(connection, username):
+    print("This is an overview of your bank accounts:\n")
+    display_table(connection, 'bank_account', username)
+    account_id = int(input("Enter the account_id to delete: \n"))
+    delete_bank_account(connection, username, account_id)
 
+def delete_transaction_cli(connection, username):
+    print("This is an overview of your transactions:\n")
+    display_table(connection, 'Transactions', username)
+    transaction_id = int(input("Enter the transaction_id to delete: \n"))
+    delete_transaction(connection, username, transaction_id)
 
-def delete_transaction_cli(connection):
-    print("This is an overview of the transactions table:\n")
-    display_table(connection, 'Transactions')
-    transaction_id = int(input("Enter the transaction_id of the transaction to delete: \n"))
-    delete_transaction(connection, transaction_id)
+def delete_monthly_expense_cli(connection, username):
+    print("This is an overview of your monthly expenses:\n")
+    display_table(connection, 'monthly_expenses', username)
+    expense_id = int(input("Enter the expense_id to delete: \n"))
+    delete_monthly_expense(connection, username, expense_id)
     
-
-def delete_monthly_expense_cli(connection):
-    print("This is an overview of the monthly_expenses table:\n")
-    display_table(connection, 'monthly_expenses')
-    category_id = int(input("Enter the category_id of the expense category to delete: \n"))
-    delete_monthly_expense(connection, category_id)
-    
-    
-def delete_expense_category_cli(connection):
+def delete_expense_category_cli(connection, username):
     try:
-        print("This is an overview of the expense_categories table:\n")
-        display_table(connection, 'expense_categories')
-        expense_id = int(input("Enter the expense_id of the monthly expense to delete: \n"))
-        delete_expense_category(connection, expense_id)
+        print("This is an overview of your expense categories:\n")
+        display_table(connection, 'expense_categories', username)
+        category_id = int(input("Enter the category_id to delete: \n"))
+        delete_expense_category(connection, username, category_id)
     except Exception as error:
         logging.error(error)
         
 def create_user_cli(connection):
-        # username:
-        username = input("Choose a username (max 10 characters):\n").strip()
-        if not username:
-            logging.error("Error: Username cannot be empty.\n")
-            return signup_menu()
-        if len(username) > 10:
-            print("Error: Username exceeds the 10-character limit.\n")
-            return signup_menu()
-        
-        # first name:
-        first_name = input("Enter your first name:\n").strip()
-        if not first_name or len(first_name) > 20:
-            logging.error("Error: First name must be between 1 and 20 characters.\n")
-            return signup_menu()
+    username = input("Choose a username (max 10 characters):\n").strip()
+    if not username or len(username) > 10:
+        logging.error("Invalid username.")
+        return
+    
+    first_name = input("Enter your first name:\n").strip()
+    last_name = input("Enter your last name:\n").strip()
+    password = input("Enter a password:\n")
+    confirm_password = input("Confirm your password:\n")
 
-        # last name:
-        last_name = input("Enter your last name:\n").strip()
-        if not last_name or len(last_name) > 20:
-            logging.error("Error: Last name must be between 1 and 20 characters.\n")
-            return signup_menu()
+    if password != confirm_password:
+        logging.error("Passwords do not match.")
+        return
 
-        # password
-        password = input("Enter a password:\n")
-        if not password:
-            logging.error("Error: Password cannot be empty.\n")
-            return signup_menu()
-        
-        # confirm password!  
-        confirm_password = input("Confirm your password:\n")
-        if password != confirm_password:
-            logging.error("Error: Passwords do not match.\n")
-            return signup_menu()
-
-        password_bytes = password.encode('utf-8')
-        salt = bcrypt.gensalt()
-        hashed_password = bcrypt.hashpw(password_bytes, salt)
-        
-        # add user:
-        user = add_user(username, first_name, last_name, hashed_password)
-        return 0
-        
-        
+    password_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+    
+    add_user(connection, username, first_name, last_name, hashed_password)
+    
+    
