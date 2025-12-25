@@ -187,6 +187,7 @@ def add_user(connection, username, first_name, last_name, hashed_password):
         logging.error(f"can't sign you up, the error is: {error}")
         connection.rollback()
         raise error
+    return None
     
     
 if __name__ == "__main__":

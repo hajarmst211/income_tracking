@@ -136,6 +136,6 @@ def create_user_cli(connection):
     salt = bcrypt.gensalt()
     hashed_password = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
     
-    add_user(connection, username, first_name, last_name, hashed_password)
+    return add_user(connection, username, first_name, last_name, hashed_password)
     
     

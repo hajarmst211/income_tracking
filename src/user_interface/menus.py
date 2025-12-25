@@ -1,9 +1,8 @@
 # menus.py
 
 import logging
-from menus_handlers import *
 
-def welcome_menu(connection, active_session):
+def welcome_menu():
     choice_script = '''
                     Hi, welcome to your income tracking interface.
                     For the main menu make sure you login or sign in first:
@@ -17,46 +16,32 @@ def welcome_menu(connection, active_session):
             logging.error("The choice is out of range, it must be between 1 to 3")
         return choice
         
-        welcome_handler(connection, active_session, choice)
     except ValueError:
         logging.error("Invalid value! Give an integer")
-        return welcome_menu(connection, active_session)
-    return 0
+    return None
 
-def login_menu(connection, active_session):
+
+def login_menu():
     try:
         username = input("Enter your username:\n").strip()
         if not username:
             print("Error: Username cannot be empty.\n")
-            return 1
+            return None
         
         password = input("Enter the password:\n")
         if not password:
             print("Error: Password cannot be empty.\n")
-            return 1
+            return None
 
-        password_bytes = password.encode('utf-8')
-        success = handle_login(connection, active_session, username, password_bytes)
-        return 0 if success else 1
+        return username, password
 
     except UnicodeEncodeError:
         print("Error: Password contains invalid characters.\n")
-        return 1
+        return None
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return 1
+        return None
 
-def signup_menu(connection):
-    try:
-        handle_signup(connection)
-        logging.info("Account created successfully!\n")
-        return 0
-    except UnicodeEncodeError:
-        print("Error: Input contains invalid characters.\n")
-        return 1
-    except Exception as e:
-        print(f"An unexpected error occurred: {e}")
-        return 1
 
 def main_menu(username):
     choice_script = f'''
@@ -71,11 +56,11 @@ def main_menu(username):
         choice = int(input(choice_script))
         if choice not in range(1, 5):
             logging.error("The choice is out of range, it must be between 1 to 4")
-            return main_menu(username)
+            return None
         return choice
     except ValueError:
         logging.error("Invalid value! Give an integer")
-        return main_menu(username)
+    return None
 
 def addition_menu(username):
     choice_script = f'''
@@ -91,11 +76,11 @@ def addition_menu(username):
         choice = int(input(choice_script))
         if choice not in range(1, 6):
             logging.error("The choice is out of range, it must be between 1 to 5")
-            return addition_menu(username)
+            return None
         return choice
     except ValueError:
         logging.error("Invalid value! Give an integer")
-        return addition_menu(username)
+        return None
 
 def suppression_menu(username):
     choice_script = f'''
@@ -111,11 +96,11 @@ def suppression_menu(username):
         choice = int(input(choice_script))
         if choice not in range(1, 6):
             logging.error("The choice is out of range, it must be between 1 to 5")
-            return suppression_menu(username)
+            return None
         return choice
     except ValueError:
         logging.error("Invalid value! Give an integer")
-        return suppression_menu(username)
+    return None
 
 def table_display_menu(username):
     choice_script = f'''
@@ -131,7 +116,8 @@ def table_display_menu(username):
         choice = int(input(choice_script))
         if choice not in range(1, 6):
             logging.error("The choice is out of range, it must be between 1 to 5")
-            return table_display_menu(username)
+            return None
+        
         return choice
     except ValueError:
         logging.error("Invalid value! Give an integer")

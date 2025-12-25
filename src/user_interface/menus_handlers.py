@@ -1,61 +1,75 @@
 # menus_handles.py
 
-import menus
-from services. auth_services import is_password_correct
+from services.auth_services import is_password_correct
 from db_operations_handlers import *
+from menus import welcome_menu, main_menu, addition_menu, login_menu, suppression_menu, table_display_menu
 import logging
 
 
-def welcome_handler(choice):
+def welcome_handler(connection, active_session):
     try:
+        choice = welcome_menu()
         match choice:
             case 1:
-                menus.login_menu()
+                handle_login(connection, active_session)
             case 2: 
-                signup_menu()
+                create_user_cli()
+                handle_login(connection, active_session)
             case 3:
                 return 0
     except KeyboardInterrupt:
         print("Operations cancelled by the user!")
         return 1
 
-
-def handle_login(connection, active_session, username, hashed_password):
-    authenticated = is_password_correct(connection, username, hashed_password)
+    
+def handle_main_menu(connection, current_user):
+    try:
+        choice = main_menu(current_user)
+        match choice:
+            case 1:
+                handle_addition(connection, current_user)
+            case 2:
+                handle_deletion(connection, current_user)
+            case 3:
+                handle_display(connection, current_user)
+            case 4:
+                return 0
+                
+    except Exception as error:
+        logging.error(error)
+    return 0
+    
+  
+def handle_login(connection, active_session):
+    username, input_password = login_menu(connection, active_session)
+    password_bytes = input_password.encode('utf-8')
+    
+    authenticated = is_password_correct(connection, username, password_bytes)
     if authenticated:
         active_session.current_user = username
-        menus.main_menu()
+        handle_main_menu(connection, active_session)
+        return 0 
     else:
         logging.error('''
                       Something is wrong in your authentication, try again!\n 
                       If you don't have an account feel free to sign in.\n
                       ''')
-    return
-
-
-def handle_signup():
-    user_creation_output = create_user_cli()
-    if user_creation_output == 0:
-        handle_login()
-    else:
-        signup_menu()
-    return 
-
-    
+    return 1
+  
 def handle_addition(connection, current_user):
     try:
-        choice = menus.addition_menu()
+        choice = addition_menu()
         match choice:
             case 1:
-                create_bank_account(connection)
+                create_bank_account(connection, current_user)
             case 2: 
-                create_transaction(connection)
+                create_transaction(connection, current_user)
             case 3:
-                create_expense_category(connection)
+                create_expense_category(connection, current_user)
             case 4:
-                create_monthly_expense(connection)
+                create_monthly_expense(connection, current_user)
             case 5:
-                menus.main_menu()
+                handle_main_menu(connection, current_user)
                 return 
     except KeyboardInterrupt:
         print("Operations cancelled by the user!")
@@ -64,16 +78,16 @@ def handle_addition(connection, current_user):
 
 def handle_deletion(connection, current_user):
     try:
-        choice = menus.suppression_menu()
+        choice = suppression_menu()
         match choice:
             case 1:
-                delete_bank_account(connection)
+                delete_bank_account(connection, current_user)
             case 2: 
-                delete_transaction(connection)
+                delete_transaction(connection, current_user)
             case 3:
-                delete_expense_category(connection)
+                delete_expense_category(connection, current_user)
             case 4:
-                delete_monthly_expense(connection)
+                delete_monthly_expense(connection, current_user)
             case 5:
                 menus.main_menu()
                 return 
@@ -84,16 +98,16 @@ def handle_deletion(connection, current_user):
     
 def handle_display(connection, current_user):
     try:
-        choice = menus.table_display_menu()
+        choice = table_display_menu()
         match choice:
             case 1:
-                display_table(connection, 'bank_account')
+                display_table(connection, 'bank_account', current_user)
             case 2: 
-                display_table(connection,'Transactions')
+                display_table(connection,'Transactions', current_user)
             case 3:
-                display_table(connection,'expense_categories')
+                display_table(connection,'expense_categories', current_user)
             case 4:
-                display_table(connection,'monthly_expenses')
+                display_table(connection,'monthly_expenses', current_user)
             case 5:
                 menus.main_menu()
                 return 
