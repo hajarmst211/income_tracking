@@ -23,6 +23,8 @@ def welcome_menu():
 
 def login_menu():
     try:
+        print("This is the login, make sure you enter the right informations:\n")
+    
         username = input("Enter your username:\n").strip()
         if not username:
             print("Error: Username cannot be empty.\n")
@@ -60,6 +62,9 @@ def main_menu(username):
         return choice
     except ValueError:
         logging.error("Invalid value! Give an integer")
+    except (Exception, KeyboardInterrupt):
+        logging.error("Program was interrupted by the user")
+        return None
     return None
 
 def addition_menu(username):

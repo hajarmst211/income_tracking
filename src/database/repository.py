@@ -1,7 +1,7 @@
 # repository.py
 
 # local function
-from connection import connect 
+from src.database.connection import connect 
 
 # standard libraries
 import psycopg2
@@ -161,7 +161,7 @@ def get_user_info(connection, username_to_find):
             cursor.execute(query, (username_to_find,))
             user_information = cursor.fetchone()
             
-            logging.info(f"{username_to_find} information fetched succefully!")
+            logging.info(f"{username_to_find} information fetched successfully!")
             return user_information
         
     except (Exception, psycopg2.DatabaseError) as error:
@@ -174,7 +174,7 @@ def add_user(connection, username, first_name, last_name, hashed_password):
     try:
         with connection.cursor() as cursor:
             insert_script = '''
-                INSERT INTO bank_account (username, first_name, last_name, password_hash)
+                INSERT INTO users (username, first_name, last_name, password_hash)
                 VALUES (%s, %s, %s, %s)
                 RETURNING *;
             '''

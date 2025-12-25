@@ -1,10 +1,7 @@
 # db_operations_handlers.py
 
-#local functions:
-from database.repository import add_bank_account, add_expense_category, add_monthly_expense, add_transaction, add_user
-from database.repository import delete_bank_account, delete_expense_category, delete_transaction, delete_monthly_expense
-from database.repository import get_all_records
-from user_interface.menus import signup_menu
+# local functions:
+from src.database.repository import *
 
 #standard function:
 from decimal import Decimal
@@ -137,5 +134,4 @@ def create_user_cli(connection):
     hashed_password = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
     
     return add_user(connection, username, first_name, last_name, hashed_password)
-    
     

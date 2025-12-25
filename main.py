@@ -1,19 +1,20 @@
 # main.py
 
 #local functions:
-from src.user_interface.menus_handlers import welcome_handler
+from src.user_interface.menus_handlers import welcome_handler, handle_login
 from src.database.connection import connect   
 from src.services.session import active_session
-
+from src.services.auth_services import debug_is_password_correct
+#src/services/session.py
 import sys
 
 def main():
     try:
         connection = connect()
         
-        while True:
+        while 1:
             welcome_handler(connection, active_session)
-            current_user = active_session.current_user()
+            
     except Exception as error:
         raise error
     
