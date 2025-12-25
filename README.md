@@ -5,6 +5,7 @@ This project is a simple command-line application built to practice **PostgreSQL
 
 
 ## Project Goals
+* Provide a personal database to track the monetary flow
 * Record incoming and outgoing transactions
 * Categorize expenses to see what they spend money on every month
 * Get a clearer picture of cash flow and spending habits
@@ -26,31 +27,29 @@ The database tracks bank accounts, transactions, expense categories, and monthly
 ```
 income_tracker/
 │
-├── config/
-│   ├── database.ini          # Database credentials
-│   └── settings.py           # ConfigParser logic to load the .ini
 │
 ├── sql/                      # Raw SQL files for reference/setup
-│   ├── 01_create_tables.sql
-│   └── 02_insert_data.sql
+│   ├── create_tables.sql
+│   ├── insert_data.sql
+│   └── test_query.sql
 │
 ├── src/
-│   ├── __init__.py
+│   ├── 
 │   ├── database/             # Database communication layer
 │   │   ├── __init__.py
 │   │   ├── connection.py     # Connection logic (Context Managers)
 │   │   └── repository.py     # Pure SQL execution (add/delete/fetch)
 │   │
 │   ├── services/             # Business logic (Validation, Auth, Calculations)
-│   │   ├── __init__.py
 │   │   ├── auth_service.py   # Login/Sign-up logic (Hashing)
 │   │   └── session.py        # Store the current logged-in user
 │   │
-│   └── ui/                   # User Interface (CLI)
-│       ├── __init__.py
+│   └── user_interface/                   # User Interface (CLI)
+│       ├── db_operations_handlers.py
 │       ├── menus.py          # Printing menus and getting choices
-│       └── handlers.py       # Functions that bridge UI input to Services/DB
+│       └── menus_handlers.py       # Functions that bridge UI input to Services/DB
 │
+├── db_env.sh
 ├── main.py                   # Application Entry Point
 ├── requirements.txt          # Dependencies
 └── .gitignore                # Exclude __pycache__, .ini, etc.

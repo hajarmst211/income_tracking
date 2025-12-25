@@ -4,7 +4,7 @@ from src.services.auth_services import is_password_correct
 from src.user_interface.db_operations_handlers import *
 from src.user_interface.menus import welcome_menu, main_menu, addition_menu, login_menu, suppression_menu, table_display_menu
 import logging
-#src/services/auth_services.py
+import sys
 
 def welcome_handler(connection, active_session):
     try:
@@ -19,9 +19,10 @@ def welcome_handler(connection, active_session):
                 return 0
     except KeyboardInterrupt:
         print("Operations cancelled by the user!")
+        sys.exit(130)
         return 1
 
-    
+
 def handle_main_menu(connection, active_session):
     try:
         current_user = active_session.current_user
