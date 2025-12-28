@@ -64,8 +64,8 @@ income_tracker/
 ```sql
 CREATE DATABASE incomeDB;
 ```
-
 ### 2. Configure Database Connection
+
 
 Edit `database.ini`:
 
