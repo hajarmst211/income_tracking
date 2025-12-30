@@ -1,7 +1,7 @@
 
 # Income Tracker (PostgreSQL Learning Project)
 
-This project is a simple command-line application built to practice **PostgreSQL** and **Python database interactions** using `psycopg2`. It models a basic personal income and expense tracking system.
+This project is a simple command-line application built to practice **PostgreSQL** and **Python database interactions** using `psycopg2`. It models a basic personal income and expense tracking system. The work is still in progress this is not the final version.
 
 
 ## Project Goals
